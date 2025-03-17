@@ -6,6 +6,6 @@ namespace KCShoppingMallWebAPI.BLL.Interfaces
     {
         Task<List<ProductResp>> GetProducts(bool? featured);
 
-        Task CreateProducts();
+        Task<List<Data.Entities.Product>> CreateProducts();
     }
 }

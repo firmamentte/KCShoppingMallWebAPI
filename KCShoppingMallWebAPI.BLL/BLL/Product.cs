@@ -15,7 +15,14 @@ namespace KCShoppingMallWebAPI.BLL.BLL
 
             List<ProductResp> productResps = [];
 
-            foreach (var product in await product.GetProducts(dbContext, featured))
+            List<Data.Entities.Product> products = await product.GetProducts(dbContext, featured);
+
+            if (products.Count == 0)
+            {
+                products = await CreateProducts();
+            }
+
+            foreach (var product in products)
             {
                 productResps.Add(FillProductResp(product));
             }
@@ -23,12 +30,11 @@ namespace KCShoppingMallWebAPI.BLL.BLL
             return productResps;
         }
 
-        public async Task CreateProducts()
+        public async Task<List<Data.Entities.Product>> CreateProducts()
         {
             using KcshoppingMallContext dbContext = new(configuration);
 
             List<Data.Entities.Product> products = [];
-            List<ProductResp> productResps = [];
 
             Random random = new();
 
@@ -48,6 +54,8 @@ namespace KCShoppingMallWebAPI.BLL.BLL
 
             await dbContext.AddRangeAsync(products);
             await dbContext.SaveChangesAsync();
+
+            return products;
         }
 
         private ProductResp FillProductResp(Data.Entities.Product product)
